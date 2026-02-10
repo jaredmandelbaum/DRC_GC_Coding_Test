@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>DRC Green Corridor Map</title>
+    <title>DRC Green Corridor</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -14,10 +14,11 @@
       :root {
         --bg: #0b0f0a;
         --text: #f2f3f1;
-        --muted: rgba(242, 243, 241, 0.7);
-        --panel: rgba(11, 15, 10, 0.75);
+        --muted: rgba(242, 243, 241, 0.72);
+        --panel: rgba(8, 10, 7, 0.78);
         --green: #7fc97f;
         --red: #e34a33;
+        --accent: #c7d1bf;
       }
       * {
         box-sizing: border-box;
@@ -29,6 +30,52 @@
         background: var(--bg);
         color: var(--text);
         font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+      }
+      .hero {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+      }
+      .hero video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: contrast(1.05) brightness(0.8);
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(4, 6, 4, 0.5) 0%,
+          rgba(4, 6, 4, 0.8) 55%,
+          rgba(4, 6, 4, 0.95) 100%
+        );
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 0 8vw;
+        max-width: 980px;
+      }
+      .hero h1 {
+        font-size: clamp(2.4rem, 5vw, 4.2rem);
+        margin: 0 0 14px 0;
+        letter-spacing: 0.5px;
+      }
+      .hero p {
+        margin: 0;
+        font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+        color: var(--accent);
+      }
+      .scroll-shell {
+        position: relative;
       }
       #map {
         height: 100vh;
@@ -48,18 +95,17 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        padding: 6vh 6vw;
+        padding: 8vh 7vw;
       }
       .step .panel {
-        max-width: 420px;
+        max-width: 460px;
         background: var(--panel);
         backdrop-filter: blur(6px);
         padding: 18px 20px;
         border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 12px;
+        border-radius: 14px;
         pointer-events: auto;
       }
-      .panel h1,
       .panel h2 {
         margin: 0 0 10px 0;
         font-weight: 600;
@@ -67,7 +113,7 @@
       .panel p {
         margin: 0;
         color: var(--muted);
-        line-height: 1.5;
+        line-height: 1.55;
       }
       .legend {
         display: grid;
@@ -92,46 +138,94 @@
       .swatch.red {
         background: rgba(227, 74, 51, 0.7);
       }
+      .footer {
+        padding: 10vh 7vw 12vh;
+        background: #080a07;
+        color: var(--muted);
+      }
       @media (max-width: 900px) {
         .step {
           justify-content: center;
         }
-        .panel {
+        .step .panel {
           max-width: 90vw;
         }
       }
     </style>
   </head>
   <body>
-    <div id="map"></div>
+    <section class="hero">
+      <video
+        src="assets/1deforsmaller.mov"
+        autoplay
+        muted
+        loop
+        playsinline
+      ></video>
+      <div class="hero-content">
+        <h1>Democratic Republic of Congo's Green Corridor</h1>
+        <p>Powerful conservation solution or greenwashing for logging?</p>
+      </div>
+    </section>
 
-    <div class="story">
-      <section class="step" data-step="0">
-        <div class="panel">
-          <h1>DRC Green Corridor</h1>
-          <p>
-            The green corridor footprint appears over the Democratic Republic of
-            Congo.
-          </p>
-          <div class="legend">
-            <span><span class="swatch green"></span>Green Corridor</span>
-          </div>
-        </div>
-      </section>
+    <section class="scroll-shell">
+      <div id="map"></div>
 
-      <section class="step" data-step="1">
-        <div class="panel">
-          <h2>Concession Overlap</h2>
-          <p>
-            Selected concession areas appear on top of the corridor.
-          </p>
-          <div class="legend">
-            <span><span class="swatch green"></span>Green Corridor</span>
-            <span><span class="swatch red"></span>Concession Selection</span>
+      <div class="story">
+        <section class="step" data-step="0">
+          <div class="panel">
+            <h2>From a Global View</h2>
+            <p>
+              The story starts with the world's forests before narrowing in on
+              the Democratic Republic of Congo.
+            </p>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+
+        <section class="step" data-step="1">
+          <div class="panel">
+            <h2>Zooming into the DRC</h2>
+            <p>
+              The country sits at the heart of the Congo Basin, one of the most
+              critical forest regions on Earth.
+            </p>
+          </div>
+        </section>
+
+        <section class="step" data-step="2">
+          <div class="panel">
+            <h2>Green Corridor Footprint</h2>
+            <p>
+              The green corridor is proposed as a sweeping conservation
+              initiative across central DRC.
+            </p>
+            <div class="legend">
+              <span><span class="swatch green"></span>Green Corridor</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="step" data-step="3">
+          <div class="panel">
+            <h2>Concession Overlap</h2>
+            <p>
+              Selected concession areas appear on top of the corridor in red.
+            </p>
+            <div class="legend">
+              <span><span class="swatch green"></span>Green Corridor</span>
+              <span><span class="swatch red"></span>Concession Selection</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="footer">
+      <p>
+        Continue the article here with additional context, interviews, or data
+        notes.
+      </p>
+    </section>
 
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -143,9 +237,9 @@
         zoomControl: true,
         scrollWheelZoom: false,
         attributionControl: true,
-      }).setView([-2.8, 23.7], 5);
+      }).setView([5, 20], 2);
 
-      const imagery = L.tileLayer(
+      L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         {
           maxZoom: 18,
@@ -153,7 +247,7 @@
         }
       ).addTo(map);
 
-      const borders = L.tileLayer(
+      L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
         {
           maxZoom: 18,
@@ -179,6 +273,7 @@
 
       let greenLayer;
       let redLayer;
+      let corridorBounds;
 
       Promise.all([
         fetch("data/green_corridor.geojson").then((r) => r.json()),
@@ -188,12 +283,10 @@
           greenLayer = L.geoJSON(greenData, { style: greenStyle }).addTo(map);
           redLayer = L.geoJSON(redData, { style: redStyle }).addTo(map);
 
+          greenLayer.setStyle({ fillOpacity: 0, opacity: 0 });
           redLayer.setStyle({ fillOpacity: 0, opacity: 0 });
 
-          const bounds = greenLayer.getBounds();
-          if (bounds.isValid()) {
-            map.fitBounds(bounds.pad(0.15));
-          }
+          corridorBounds = greenLayer.getBounds();
         })
         .catch((err) => {
           console.error("Failed to load GeoJSON", err);
@@ -201,10 +294,32 @@
 
       function setStep(step) {
         if (!greenLayer || !redLayer) return;
+
         if (step === 0) {
+          map.flyTo([5, 20], 2, { duration: 1.5 });
+          greenLayer.setStyle({ fillOpacity: 0, opacity: 0 });
+          redLayer.setStyle({ fillOpacity: 0, opacity: 0 });
+          return;
+        }
+
+        if (step === 1) {
+          if (corridorBounds && corridorBounds.isValid()) {
+            map.fitBounds(corridorBounds.pad(0.3), { animate: true, duration: 1.5 });
+          } else {
+            map.flyTo([-2.8, 23.7], 5, { duration: 1.5 });
+          }
+          greenLayer.setStyle({ fillOpacity: 0, opacity: 0 });
+          redLayer.setStyle({ fillOpacity: 0, opacity: 0 });
+          return;
+        }
+
+        if (step === 2) {
           greenLayer.setStyle({ fillOpacity: 0.35, opacity: 0.8 });
           redLayer.setStyle({ fillOpacity: 0, opacity: 0 });
-        } else {
+          return;
+        }
+
+        if (step >= 3) {
           greenLayer.setStyle({ fillOpacity: 0.35, opacity: 0.8 });
           redLayer.setStyle({ fillOpacity: 0.65, opacity: 0.9 });
         }
