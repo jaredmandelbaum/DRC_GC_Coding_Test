@@ -283,10 +283,14 @@
           greenLayer = L.geoJSON(greenData, { style: greenStyle }).addTo(map);
           redLayer = L.geoJSON(redData, { style: redStyle }).addTo(map);
 
-          greenLayer.setStyle({ fillOpacity: 0, opacity: 0 });
+          // Force the corridor visible for debugging.
+          greenLayer.setStyle({ fillOpacity: 0.45, opacity: 0.8 });
           redLayer.setStyle({ fillOpacity: 0, opacity: 0 });
 
           corridorBounds = greenLayer.getBounds();
+          if (corridorBounds && corridorBounds.isValid()) {
+            map.fitBounds(corridorBounds.pad(0.3));
+          }
           setStep(0);
         })
         .catch((err) => {
