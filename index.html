@@ -44,7 +44,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: contrast(1.05) brightness(0.8);
+        filter: contrast(1.05) brightness(1);
       }
       .hero::after {
         content: "";
@@ -52,9 +52,9 @@
         inset: 0;
         background: linear-gradient(
           180deg,
-          rgba(4, 6, 4, 0.5) 0%,
-          rgba(4, 6, 4, 0.8) 55%,
-          rgba(4, 6, 4, 0.95) 100%
+          rgba(4, 6, 4, 0.2) 0%,
+          rgba(4, 6, 4, 0.55) 55%,
+          rgba(4, 6, 4, 0.75) 100%
         );
       }
       .hero-content {
@@ -176,8 +176,8 @@
           <div class="panel">
             <h2>From a Global View</h2>
             <p>
-              The story starts with the world's forests before narrowing in on
-              the Democratic Republic of Congo.
+              DRC has X% of the world's tropical forests, but every year X% is
+              cut down for logging.
             </p>
           </div>
         </section>
@@ -268,7 +268,7 @@
         weight: 1.4,
         opacity: 0.9,
         fillColor: "#e34a33",
-        fillOpacity: 0.65,
+        fillOpacity: 0.85,
       };
 
       let greenLayer;
@@ -292,36 +292,64 @@
           console.error("Failed to load GeoJSON", err);
         });
 
+      let fadeHandle;
+
+      function fadeLayer(layer, targetFill, targetStroke, duration = 1200) {
+        if (!layer) return;
+        if (fadeHandle) cancelAnimationFrame(fadeHandle);
+        const start = performance.now();
+        const initialFill = layer.options.fillOpacity ?? 0;
+        const initialStroke = layer.options.opacity ?? 0;
+        const deltaFill = targetFill - initialFill;
+        const deltaStroke = targetStroke - initialStroke;
+
+        const tick = (now) => {
+          const t = Math.min((now - start) / duration, 1);
+          const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          layer.setStyle({
+            fillOpacity: initialFill + deltaFill * eased,
+            opacity: initialStroke + deltaStroke * eased,
+          });
+          if (t < 1) {
+            fadeHandle = requestAnimationFrame(tick);
+          }
+        };
+        fadeHandle = requestAnimationFrame(tick);
+      }
+
       function setStep(step) {
         if (!greenLayer || !redLayer) return;
 
         if (step === 0) {
-          map.flyTo([5, 20], 2, { duration: 1.5 });
-          greenLayer.setStyle({ fillOpacity: 0, opacity: 0 });
-          redLayer.setStyle({ fillOpacity: 0, opacity: 0 });
+          map.flyTo([5, 20], 2, { duration: 2.6 });
+          fadeLayer(greenLayer, 0, 0, 800);
+          fadeLayer(redLayer, 0, 0, 800);
           return;
         }
 
         if (step === 1) {
           if (corridorBounds && corridorBounds.isValid()) {
-            map.fitBounds(corridorBounds.pad(0.3), { animate: true, duration: 1.5 });
+            map.fitBounds(corridorBounds.pad(0.3), { animate: true, duration: 3.2 });
           } else {
-            map.flyTo([-2.8, 23.7], 5, { duration: 1.5 });
+            map.flyTo([-2.8, 23.7], 5, { duration: 3.2 });
           }
-          greenLayer.setStyle({ fillOpacity: 0, opacity: 0 });
-          redLayer.setStyle({ fillOpacity: 0, opacity: 0 });
+          fadeLayer(greenLayer, 0, 0, 800);
+          fadeLayer(redLayer, 0, 0, 800);
           return;
         }
 
         if (step === 2) {
-          greenLayer.setStyle({ fillOpacity: 0.35, opacity: 0.8 });
-          redLayer.setStyle({ fillOpacity: 0, opacity: 0 });
+          fadeLayer(greenLayer, 0.35, 0.8, 1800);
+          fadeLayer(redLayer, 0, 0, 800);
           return;
         }
 
         if (step >= 3) {
-          greenLayer.setStyle({ fillOpacity: 0.35, opacity: 0.8 });
-          redLayer.setStyle({ fillOpacity: 0.65, opacity: 0.9 });
+          if (corridorBounds && corridorBounds.isValid()) {
+            map.fitBounds(corridorBounds.pad(0.15), { animate: true, duration: 2.6 });
+          }
+          fadeLayer(greenLayer, 0.35, 0.8, 1200);
+          fadeLayer(redLayer, 0.85, 0.95, 1200);
         }
       }
 
